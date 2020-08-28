@@ -1,0 +1,21 @@
+{
+  "name": "starterkit",
+  "description": "Initial commit",
+  "main": "index.js",
+  "authors": [
+    "Vlad"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "4.1.2",
+    "jquery": "^3.3.1"
+  }
+}
