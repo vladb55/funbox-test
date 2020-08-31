@@ -14,13 +14,13 @@ var autoprefixerList = [
 
 var path = {
     build: {
-        js:         'public/assets/js/',
-        style:      'public/assets/css/',
-        styleLibs:  'public/assets/css/libs/',
-        jsLibs:     'public/assets/js/libs/',
-        img:        'public/assets/img/',
-        fonts:      'public/assets/fonts/',
-        views:      'public/'
+        js:         'docs/assets/js/',
+        style:      'docs/assets/css/',
+        styleLibs:  'docs/assets/css/libs/',
+        jsLibs:     'docs/assets/js/libs/',
+        img:        'docs/assets/img/',
+        fonts:      'docs/assets/fonts/',
+        views:      'docs/'
     },
     src: {
         js:         'resources/assets/js/main.js',
@@ -43,7 +43,7 @@ var path = {
         fonts: 'resources/assets/fonts/**/*.*',
         views: 'resources/views/**'
     },
-    clean:     './public/assets'
+    clean:     './docs/assets'
 };
 
 var config = {
@@ -53,7 +53,7 @@ var config = {
     fallback: 'index.html',
     livereload: true,
     open: true,
-    server: './public'
+    server: './docs'
 };
 
 var gulp = require('gulp'),  // подключаем Gulp
@@ -176,7 +176,7 @@ gulp.task('watch', function() {
 gulp.task('mailStyles', function () {
     return gulp.src('resources/assets/sass/mail/*.*')
         .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest('public/assets/css/mail/'));
+        .pipe(gulp.dest('docs/assets/css/mail/'));
 });
 
 // Вставка инлайн стилей вместо классов
