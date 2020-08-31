@@ -23,7 +23,7 @@ var path = {
         views:      'docs/'
     },
     src: {
-        js:         'resources/assets/js/main.js',
+        js:         'resources/assets/js/app.js',
         style:      'resources/assets/sass/app.scss',
         styleLibs:  'resources/assets/css/libs/*.css',
         jsLibs:     'resources/assets/js/libs/*.js',
@@ -32,8 +32,7 @@ var path = {
         views:      'resources/views/*.*'
     },
     watch: {
-        js:    'resources/assets/js/main.js',
-        app:   'resources/assets/js/app.js',
+        js:    'resources/assets/js/app.js',
         var:   'resources/assets/sass/variables.scss',
         style: 'resources/assets/sass/app.scss',
         exts: [
@@ -59,7 +58,6 @@ var config = {
 var gulp = require('gulp'),  // подключаем Gulp
     webserver = require('browser-sync'), // сервер для работы и автоматического обновления страниц
     plumber = require('gulp-plumber'), // модуль для отслеживания ошибок
-    rigger = require('gulp-rigger'), // модуль для импорта содержимого одного файла в другой
     sourcemaps = require('gulp-sourcemaps'), // модуль для генерации карты исходных файлов
     sass = require('gulp-sass'), // модуль для компиляции SASS (SCSS) в CSS
     autoprefixer = require('gulp-autoprefixer'), // модуль для автоматической установки автопрефиксов
@@ -69,7 +67,8 @@ var gulp = require('gulp'),  // подключаем Gulp
     imagemin = require('gulp-imagemin'), // плагин для сжатия PNG, JPEG, GIF и SVG изображений
     jpegrecompress = require('imagemin-jpeg-recompress'), // плагин для сжатия jpeg
     pngquant = require('imagemin-pngquant'), // плагин для сжатия png
-    fileinclude = require('gulp-file-include'); // плагин для подключения html в html
+    fileinclude = require('gulp-file-include'), // плагин для подключения html в html
+    babel = require('gulp-babel');
 
 // emails dependencies
 var inky = require('inky'),
@@ -96,19 +95,6 @@ gulp.task('csslibs:build', function () {
         .pipe(cleanCSS())
         .pipe(gulp.dest(path.build.styleLibs))
 });
-
-
-// сбор js
-gulp.task('js:build', function () {
-    return gulp.src(path.src.js) // получим файл app.js
-        .pipe(plumber()) // для отслеживания ошибок
-        .pipe(rigger()) // импортируем все указанные файлы в main.js
-        .pipe(sourcemaps.init()) //инициализируем sourcemap
-        .pipe(uglify()) // минимизируем js
-        .pipe(sourcemaps.write('./')) //  записываем sourcemap
-        .pipe(gulp.dest(path.build.js)) // положим готовый файл
-});
-
 
 //Перенос шрифтов
 gulp.task('fonts:build', function() {
@@ -150,9 +136,18 @@ gulp.task('webserver', function () {
     webserver(config);
 });
 
+// babel
+gulp.task('babel', function () {
+    return gulp.src(path.src.js)
+        .pipe(babel())
+        .pipe(uglify())
+        .pipe(gulp.dest(path.build.js));
+});
+
 gulp.task('build', gulp.series(
     'css:build',
     'csslibs:build',
+    'babel',
     'fonts:build',
     'image:build',
     'views:build'
@@ -160,11 +155,10 @@ gulp.task('build', gulp.series(
 
 gulp.task('watch', function() {
     gulp.watch([path.watch.style,path.watch.var], gulp.series('css:build'));
-    gulp.watch(path.watch.js, gulp.series('js:build'));
     gulp.watch(path.watch.img, gulp.series('image:build'));
     gulp.watch(path.watch.fonts, gulp.series('fonts:build'));
     gulp.watch(path.watch.views, gulp.series('views:build'));
-    gulp.watch(path.watch.app, gulp.series('js:build'));
+    gulp.watch(path.watch.js, gulp.series('babel'));
 
     path.watch.exts.forEach(function(file) {
         gulp.watch(file, gulp.series('css:build'));
